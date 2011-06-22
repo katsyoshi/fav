@@ -1,0 +1,33 @@
+* Mikutterプラグイン
+* fav.rb
+TLに流れる任意のユーザのツイートを自動でふぁぼふぁぼします。
+** インストール
+fav.rbをmikutterのpluginディレクトリに移動させます。
+
+** 設定
+fav.rbをインストールしたら，mikutterを起動させます．
+mikutterを起動させると，設定タブにふぁぼというタイトルタブが出来ています．ふぁぼるよグループがあります．
+ふぁぼるよグループは，チェックボックス付きのじどうふぁぼとじどうりついーと，ふぁぼるゆーざがあります．
+チェックボックス付きのじどうふぁぼとじどうりついーとがあるので，チェックを入れると自動でふぁぼふぁぼします．
+ふぁぼるゆーざは，自動でふぁぼふぁぼしたいユーザのTwitter IDを入力します．入力されたユーザはふぁぼふぁぼされる対象となります．ここを入力してじどうふぁぼにチェックすれば，タイムラインが更新されたときに対象のユーザがツイートするたびに自動でふぁぼふぁぼします．
+
+* ライセンス License
+
+Copyright (C) 2011  MATSUMOTO, Katsuyoshi
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+* 連絡先 Contact
+Twitter @katsyoshi
+Blog http://d.hatena.ne.jp/katsyoshi/
