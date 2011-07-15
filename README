@@ -1,15 +1,47 @@
 * Mikutterプラグイン
 * fav.rb
 TLに流れる任意のユーザのツイートを自動でふぁぼふぁぼします。
+* fav_bayes.rb
+TLに流れるツイートをベイジアンフィルタを利用して自動でふぁぼふぁぼします．
 ** インストール
-fav.rbをmikutterのpluginディレクトリに移動させます。
+{fav,fav_bayes}.rbをmikutterのpluginディレクトリに移動させます。
+*** fav_bayes.rb
+fav_bayes.rbは，日本語ツイートを形態素解析するためにMeCabを利用してます．
+**** MeCab
+MeCabとMeCabのRubyバインディングをインストールして下さい．
+MeCabのインストールは，以下の方法で行います．
+- Ubuntu
+ apt-get install mecab mecab-ipadic-utf8 libmecab-dev
+- Mac
+ homebrew install mecab mecab-ipadic
+
+- Rubyバインディングスのインストール
+Rubyバインディングのソースを以下のサイトから落してきます．
+ http://sourceforge.net/projects/mecab/files/mecab-ruby/0.98/
+mecab-ruby-0.98.tar.gzを展開します．
+展開したら，gemをイントールします．
+ tar zxvf mecab-ruby-0.98.tar.gz
+ cd mecab-ruby-0.98/
+ gem build mecab-ruby.gemspec
+ gem install mecab-ruby
+これでMeCabaの設定はおわりです．
 
 ** 設定
+*** fav.rb
 fav.rbをインストールしたら，mikutterを起動させます．
 mikutterを起動させると，設定タブにふぁぼというタイトルタブが出来ています．ふぁぼるよグループがあります．
 ふぁぼるよグループは，チェックボックス付きのじどうふぁぼとじどうりついーと，ふぁぼるゆーざがあります．
 チェックボックス付きのじどうふぁぼとじどうりついーとがあるので，チェックを入れると自動でふぁぼふぁぼします．
 ふぁぼるゆーざは，自動でふぁぼふぁぼしたいユーザのTwitter IDを入力します．入力されたユーザはふぁぼふぁぼされる対象となります．ここを入力してじどうふぁぼにチェックすれば，タイムラインが更新されたときに対象のユーザがツイートするたびに自動でふぁぼふぁぼします．
+きーわーどは，きーわーどを含んだついーとを自動でふぁぼふぁぼします．
+
+*** fav_bayes.rb
+fav.rbと同様にmikutterを起動させます．
+設定タブに「べいず」というタブが出来ています．その中に「べいず」というチェックボックスがあるのでチェックすると，学習とふぁぼふぁぼをしはじめます．
+学習したフィルタは，~/.mikutter/fav.datに保存されます．
+
+*さいごに
+明るいふぁぼらいふを
 
 * ライセンス License
 
