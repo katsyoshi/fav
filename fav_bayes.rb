@@ -62,11 +62,11 @@ Module.new do
       message.each do |msg|
         tweet = msg.to_s
         pt = @mecab.parse(tweet)
-        puts pt
         d = @bayes.classify(pt)
-        puts d
-        # msg.favorite(true) if d =~ /fav/i
-        @bayes.train( d, pt )
+        # puts pt # 形態素解析結果表示
+        # puts d # 判定結果表示
+        msg.favorite(true) if d =~ /fav/i # 判定結果に基ずきふぁぼふぁぼします
+        @bayes.train( d, pt ) # 学習するよ
       end
     end
   end
