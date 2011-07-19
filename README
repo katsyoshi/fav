@@ -1,4 +1,5 @@
 * Mikutterプラグイン
+* Japanese
 * fav.rb
 TLに流れる任意のユーザのツイートを自動でふぁぼふぁぼします。
 * fav_bayes.rb
@@ -42,6 +43,21 @@ fav.rbと同様にmikutterを起動させます．
 
 *さいごに
 明るいふぁぼらいふを
+
+* English
+this ruby files are mikutter pluing.
+mikutter is twitter client. mikutter is good!!
+mikutter http://mikutter.hachune.net/
+
+* fav.rb
+fav.rb is automatic favoriting your timeline.
+fav.rb has feature that this plugin is realtime automatic favoriting your friend tweet.
+
+* fav_bayes.rb
+fav_bayes.rb is automatic favoriting your timeline.
+fav_bayes.rb has feature that this plugin is realtime auto favoriting your timeline.
+fav_bayes.rb requires gem librarys, classfiere and MeCab.
+
 
 * ライセンス License
 

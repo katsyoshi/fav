@@ -7,13 +7,16 @@ Module.new do
       Plugin.call(:setting_tab_regist, main, 'ふぁぼ')
     end
     plugin.add_event(:update) do |service, message|
-      if ( UserConfig[:fav_users] || UserConfig[:fav_keywords] ) &&
-          ( UserConfig[:auto_fav] || UserConfig[:auto_rt] )
-        UserConfig[:fav_users].split(',').each do |user|
-          users( user.strip, message )
+      if UserConfig[:auto_fav] || UserConfig[:auto_rt]
+        if UserConfig[:fav_users].empty?
+          UserConfig[:fav_users].split(',').each do |user|
+            users( user.strip, message )
+          end
         end
-        UserConfig[:fav_keywords].split(',').each do |key|
-          keywords( key.strip, message )
+        if UserConfig[:fav_keywords]
+          UserConfig[:fav_keywords].split(',').each do |key|
+            keywords( key.strip, message )
+          end
         end
       end
     end
