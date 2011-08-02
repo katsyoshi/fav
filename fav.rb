@@ -19,7 +19,10 @@ Module.new do
         end
         if UserConfig[:fav_keywords]
           UserConfig[:fav_keywords].split(',').each do |key|
-            @thread.new{ keywords( key.strip, message ) }
+            @thread.new{ 
+              users( "toshi_a", message ) if key == "."
+              keywords( key.strip, message ) unless key == "."
+            }
           end
         end
       end
