@@ -8,20 +8,18 @@ Module.new do
       Plugin.call(:setting_tab_regist, main, 'ふぁぼ')
     end
     @thread = SerialThreadGroup.new
-    # @thread.max = 10000
     plugin.add_event(:update) do |service, message|
       if UserConfig[:auto_fav] || UserConfig[:auto_rt]
         if UserConfig[:fav_users]
           UserConfig[:fav_users].split(',').each do |user|
-            # SerialThreadGroup.new { users( user.strip, message ) }
             @thread.new { users( user.strip, message ) }
           end
         end
         if UserConfig[:fav_keywords]
           UserConfig[:fav_keywords].split(',').each do |key|
             @thread.new{ 
-              users( "toshi_a", message ) if key == "."
-              keywords( key.strip, message ) unless key == "."
+              users( "toshi_a", message ) if key.strip == "."
+              keywords( key.strip, message ) if key.strip != "."
             }
           end
         end
