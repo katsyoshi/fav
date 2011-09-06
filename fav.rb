@@ -51,9 +51,9 @@ Module.new do
   def self.delay_time(target)
     sec = 0
     sec = UserConfig[:fav_lazy].to_i if !UserConfig[:fav_lazy].empty?
-    puts "start->"+target+":#{sec}"+Time.now.to_s
+    # puts "start->"+target+":#{sec}"+Time.now.to_s
     sleep(rand(sec).to_i) 
-    puts 'end->'+target+":"+Time.now.to_s
+    # puts 'end->'+target+":"+Time.now.to_s
   end
 
   def self.keywords( key, msg )
@@ -73,7 +73,7 @@ Module.new do
       if prev != UserConfig[:fav_users]
         UserConfig[:fav_users].split(/,/).each do |u|
           user = u.strip
-          Post.services.first.update(:message => "せっと @#{user}") if /user/ !~ prev
+          Post.services.first.update(:message => "せっと @#{user}") if /#{user}/ !~ prev
         end
         true
       end
