@@ -8,8 +8,11 @@ Module.new do
       Plugin.call(:setting_tab_regist, main, 'ふぁぼ')
     end
     @thread = SerialThreadGroup.new
+    prev = UserConfig[:fav_users] 
     plugin.add_event(:update) do |service, message|
       if UserConfig[:auto_fav] || UserConfig[:auto_rt]
+        tf = notify_friends(prev)
+        prev = UserConfig[:fav_users] if tf
         if UserConfig[:fav_users]
           UserConfig[:fav_users].split(',').each do |user|
             @thread.new { users( user.strip, message ) }
@@ -65,11 +68,24 @@ Module.new do
     end
   end
 
+  def self.notify_friends(prev)
+    if UserConfig[:notify_favrb] 
+      if prev != UserConfig[:fav_users]
+        UserConfig[:fav_users].split(/,/).each do |u|
+          user = u.strip
+          Post.services.first.update(:message => "せっと @#{user}") if /user/ !~ prev
+        end
+        true
+      end
+    end
+  end
+
   def self.main
     box = Gtk::VBox.new(false)
     fav_u = Mtk.group("ふぁぼるよ",
                       Mtk.boolean(:auto_fav, "じどうふぁぼ"),
                       Mtk.boolean(:auto_rt, "じどうりついーと"),
+                      Mtk.boolean(:notify_favrb, "つうち"),
                       Mtk.input(:fav_users,"ふぁぼるゆーざ"),
                       Mtk.input(:fav_keywords, "きーわーど"),
                       # Mtk.adjustment使いたいがなんか使えない
