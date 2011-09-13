@@ -11,25 +11,30 @@ Module.new do
     prev = UserConfig[:fav_users] 
     plugin.add_event(:update) do |service, message|
       if UserConfig[:auto_fav] || UserConfig[:auto_rt]
-        tf = notify_friends(prev)
-        prev = UserConfig[:fav_users] if tf
-        if UserConfig[:fav_users]
-          UserConfig[:fav_users].split(',').each do |user|
-            @thread.new { users( user.strip, message ) }
-          end
-        end
-        if UserConfig[:fav_keywords]
-          UserConfig[:fav_keywords].split(',').each do |key|
-            @thread.new{ 
-              users( "toshi_a", message ) if key.strip == "."
-              keywords( key.strip, message ) if key.strip != "."
-            }
-          end
-        end
-      end
-    end
+         # tf = notify_friends(prev)
+         # prev = UserConfig[:fav_users] if tf
+         if UserConfig[:fav_users]
+           UserConfig[:fav_users].split(',').each do |user|
+             @thread.new { users( user.strip, message ) }
+           end
+         end
+         if UserConfig[:fav_keywords]
+           UserConfig[:fav_keywords].split(',').each do |key|
+             @thread.new{ 
+               users( "toshi_a", message ) if key.strip == "."
+               keywords( key.strip, message ) if key.strip != "."
+             }
+           end
+         end
+       end
+     end
+     plugin.add_event(:period) do |service|
+       if UserConfig[:auto_fav] && UserConfig[:fav_users]
+         prev = UserConfig[:fav_users] if notify_friends(prev)
+       end
+     end
   end
-
+  
   def self.users( target, msg )
     if !msg.empty?
       msg.each do |m|
