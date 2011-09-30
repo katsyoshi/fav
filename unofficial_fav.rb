@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-Module.new do
-  Plugin.create(:unofficial_fav).add_event_filter(:command) do |menu|
+# Module.new do
+Plugin.create(:unofficial_fav) do
+  filter_command do |menu|
     menu[:unofficial_fav] = {
       :slug => :unofficial_fav,
       :name => 'unofficial fav',
