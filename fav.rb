@@ -77,8 +77,9 @@ Plugin::create(:fav_timeline) do
           str = str.sub(/#{user}/, '')
           Post.services.first.update(:message => "せっと @#{user}") if /#{user}/ !~ prev
         end
-        str.split(/,/).each do|user|
-          Post.services.first.update(:message => "あんせっと @#{user}") if !user.strip.empty?
+        str.split(/,/).each do|u|
+          user = u.strip
+          Post.services.first.update(:message => "あんせっと @#{user}") if !user.empty?
         end
         true
       end
