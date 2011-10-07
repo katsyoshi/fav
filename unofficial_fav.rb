@@ -6,8 +6,8 @@ Plugin.create(:unofficial_fav) do
       :slug => :unofficial_fav,
       :name => 'unofficial fav',
       :condition => lambda{ |m| m.message.repliable? },
-      :exec => lambda{|m| 
-        Post.services.first.update(:message => "@#{m.message.user.idname} ★", 
+      :exec => lambda{|m|
+        Post.services.first.update(:message => "@#{m.message.user.idname} ★",
                                    :replyto => m.message) },
       :visible => true,
       :role => :message }
