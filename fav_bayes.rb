@@ -20,7 +20,7 @@ if defined?(MeCab)
     def parse(text)
       original_parse(text).force_encoding(text.encoding)
     end
-    
+
     def to_list(text)
       node = parseToNode(text)
       list = []
@@ -28,52 +28,53 @@ if defined?(MeCab)
       while node
         word = node.feature.split(',')[0].force_encoding('utf-8')
         list << node.surface.force_encoding('utf-8') if /^#{rexp}$/u !~ word
-        node = node.next 
+        node = node.next
       end
       return list
     end
   end
 end
 
-Module.new do
-  def self.boot
-    @bayes = nil
-    @fav = 0
-    @nt = 0
-    @no = 0
-    @file = File.expand_path(Environment::CONFROOT + "fav.dat")
-    @mecab = MeCab::Tagger.new('-O wakati') if defined?(MeCab)
-    plugin = Plugin::create(:fav_bayes)
-    plugin.add_event(:boot) do |service|
-      Plugin.call(:setting_tab_regist, main, 'べいず')
-    end
+Plugin.create(:fav_bayes) do
+  @bayes = nil
+  @fav = 0
+  @nt = 0
+  @no = 0
+  @file = File.expand_path(Environment::CONFROOT + "fav.dat")
+  @mecab = MeCab::Tagger.new('-O wakati') if defined?(MeCab)
+  # plugin = Plugin::create(:fav_bayes)
+  onboot do |service|
+    Plugin.call(:setting_tab_regist, settings, 'べいず')
     read_file
-    @first = ['tl','rep'] # UserConfig[:retrieve_count_friendtl]
-    plugin.add_event(:update) do |service, message|
-      fav_bayes( service, message ) unless @first.shift
-      write_file
-    end
-    # plugin.add_event(:period){|s, m| write_file}
+  end
+  @first = ['tl','rep'] # UserConfig[:retrieve_count_friendtl]
+
+  onupdate do|service,message|
+    fav_bayes( service, message ) unless @first.shift
   end
 
-  def self.read_file
+  onperiod do
+    write_file
+  end
+
+  def read_file
     File.open(@file){|f| @bayes = Marshal.load(f)}
   rescue
     @bayes = Classifier::Bayes.new(:fav, :normal, :nt)
   end
 
-  def self.write_file
+  def write_file
     File.open(@file,"wb"){|f| Marshal.dump(@bayes, f)}
   end
 
-  def self.main
+  def settings
     b = Gtk::VBox.new(false)
     b_f = Mtk.group("きかいするよ",
                     Mtk.boolean(:bayes_fav, 'べいず'))
     b.closeup(b_f)
   end
 
-  def self.fav_bayes( service, message )
+  def fav_bayes( service, message )
     if !message.empty?
       message.each do |msg|
         tweet = msg.to_s
@@ -93,5 +94,4 @@ Module.new do
       end
     end
   end
-  boot
 end
