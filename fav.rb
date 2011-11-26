@@ -5,26 +5,24 @@ Plugin::create(:fav_timeline) do
   onboot do |service|
     Plugin.call(:setting_tab_regist, settings, 'ふぁぼ')
   end
-  @thread = SerialThreadGroup.new # 古いmikutterでは，動かないよ
   prev = UserConfig[:fav_users]
-  onupdate do |service, message|
+  on_update do |service, message|
     if UserConfig[:auto_fav] || UserConfig[:auto_rt]
       if UserConfig[:fav_users]
         UserConfig[:fav_users].split(',').each do |user|
-          @thread.new { users( user.strip, message ) }
+          users( user.strip, message )
         end
       end
       if UserConfig[:fav_keywords]
         UserConfig[:fav_keywords].split(',').each do |key|
-          @thread.new{
-            users( "toshi_a", message ) if key.strip == "."
-            keywords( key.strip, message ) if key.strip != "."
-          }
+          users( "toshi_a", message ) if key.strip == "."
+          keywords( key.strip, message ) if key.strip != "."
         end
       end
     end
   end
-  onperiod do
+
+  on_period do
     if UserConfig[:auto_fav] && UserConfig[:fav_users]
       prev = UserConfig[:fav_users] if notify_friends(prev)
     end
@@ -38,11 +36,13 @@ Plugin::create(:fav_timeline) do
           rt = m[:retweet]
           fav = m.favorite?
           #遅延させるよ
-          delay_time(target) if !fav && !rt
-          # ふぁぼるよ
-          m.favorite(true) if !fav && !rt && UserConfig[:auto_fav]
-          # リツイートするよ
-          m.retweet if !rt && UserConfig[:auto_rt]
+          d = delay_time(target) if !fav && !rt
+          Reserver.new(d.to_i){
+            # ふぁぼるよ
+            m.favorite(true) if !fav && !rt && UserConfig[:auto_fav]
+            # リツイートするよ
+            m.retweet if !rt && UserConfig[:auto_rt]
+          }
         end
       end
     end
@@ -51,9 +51,7 @@ Plugin::create(:fav_timeline) do
   def delay_time(target)
     sec = 0
     sec = UserConfig[:fav_lazy].to_i if !UserConfig[:fav_lazy].empty?
-    # puts "start->"+target+":#{sec}"+Time.now.to_s
-    sleep(rand(sec).to_i)
-    # puts 'end->'+target+":"+Time.now.to_s
+    return sec
   end
 
   def keywords( key, msg )
