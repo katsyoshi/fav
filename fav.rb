@@ -2,9 +2,6 @@
 # requrie 'date'
 miquire :core, "serialthread"
 Plugin::create(:fav_timeline) do
-  onboot do |service|
-    Plugin.call(:setting_tab_regist, settings, 'ふぁぼ')
-  end
   prev = UserConfig[:fav_users]
   on_update do |service, message|
     if UserConfig[:auto_fav] || UserConfig[:auto_rt]
@@ -50,7 +47,7 @@ Plugin::create(:fav_timeline) do
 
   def delay_time(target)
     sec = 0
-    sec = UserConfig[:fav_lazy].to_i if !UserConfig[:fav_lazy].empty?
+    sec = UserConfig[:fav_lazy].to_i if UserConfig[:fav_lazy]
     return sec
   end
 
@@ -84,16 +81,12 @@ Plugin::create(:fav_timeline) do
     end
   end
 
-  def settings
-    box = Gtk::VBox.new(false)
-    fav_u = Mtk.group("ふぁぼるよ",
-                      Mtk.boolean(:auto_fav, "じどうふぁぼ"),
-                      Mtk.boolean(:auto_rt, "じどうりついーと"),
-                      Mtk.boolean(:notify_favrb, "つうち"),
-                      Mtk.input(:fav_users,"ふぁぼるゆーざ"),
-                      Mtk.input(:fav_keywords, "きーわーど"),
-                      # Mtk.adjustment使いたいがなんか使えない
-                      Mtk.input(:fav_lazy, "ちえん時間"))
-    box.closeup(fav_u)
+  settings 'ふぁぼ' do
+    boolean "じどうふぁぼ", :auto_fav
+    boolean "じどうりついーと", :auto_rt
+    boolean "つうち", :notify_favrb
+    input "ふぁぼるゆーざ", :fav_users
+    input "きーわーど", :fav_keywords
+    adjustment "ちえん時間", :fav_lazy, 0, 3600
   end
 end
