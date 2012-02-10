@@ -25,6 +25,7 @@ Plugin::create(:fav_timeline) do
     end
   end
 
+  # ついーとしたゆーざをふぁぼふぁぼするよ
   def users( target, msg )
     if !msg.empty?
       msg.each do |m|
@@ -32,37 +33,34 @@ Plugin::create(:fav_timeline) do
         if user == target
           rt = m[:retweet]
           fav = m.favorite?
-          #遅延させるよ
-          d = delay_time(target) if !fav && !rt
-          Reserver.new(d.to_i){
-            # ふぁぼるよ
-            m.favorite(true) if !fav && !rt && UserConfig[:auto_fav]
-            # リツイートするよ
-            m.retweet if !rt && UserConfig[:auto_rt]
-          }
+          delay_fav(m)
         end
       end
     end
   end
 
-  def delay_time(target)
-    sec = 0
-    sec = UserConfig[:fav_lazy].to_i if UserConfig[:fav_lazy]
-    return sec
-  end
-
+  # ついーとにきーわーどが含まれたらふぁぼふぁぼするよ
   def keywords( key, msg )
     if !msg.empty?
       msg.each do |m|
         if /#{key}/u =~ m.to_s
-          delay_time(m.idname) if !m.favorite?
-          m.favorite(true) if UserConfig[:auto_fav] && !m.favorite?
-          m.retweet if UserConfig[:auto_rt] && !m[:retweet]
+          delay_fav(m)
         end
       end
     end
   end
 
+  # 遅延させてふぁぼるよ
+  def delay_fav(message)
+    sec = rand(UserConfig[:fav_lazy].to_i)
+    Reserver.new(sec.to_i) do
+      message.favorite(true) if !message.favorite? && UserConfig[:auto_fav]
+      message.retweet if !message[:retweet] && UserConfig[:auto_rt]
+    end
+    return sec
+  end
+
+  # 通知するお
   def notify_friends(prev)
     if UserConfig[:notify_favrb]
       if prev != UserConfig[:fav_users]
@@ -70,11 +68,11 @@ Plugin::create(:fav_timeline) do
         UserConfig[:fav_users].split(/,/).each do |u|
           user = u.strip
           str = str.sub(/#{user}/, '')
-          Post.services.first.update(:message => "せっと @#{user}") if /#{user}/ !~ prev
+          Service.services.first.update(:message => "せっと @#{user}") if /#{user}/ !~ prev
         end
         str.split(/,/).each do|u|
           user = u.strip
-          Post.services.first.update(:message => "あんせっと @#{user}") if !user.empty?
+          Service.services.first.update(:message => "あんせっと @#{user}") if !user.empty?
         end
         true
       end
