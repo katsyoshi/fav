@@ -54,7 +54,9 @@ Plugin::create(:fav_timeline) do
   def delay_fav(message)
     sec = rand(UserConfig[:fav_lazy].to_i)
     Reserver.new(sec.to_i) do
-      message.favorite(true) if !message.favorite? && UserConfig[:auto_fav]
+      if UserConfig[:auto_fav]
+        message.favorite(true) if !message.favorite? && !message[:retweet]
+      end
       message.retweet if !message[:retweet] && UserConfig[:auto_rt]
     end
     return sec
