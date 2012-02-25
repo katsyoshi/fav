@@ -3,6 +3,7 @@
 miquire :core, "serialthread"
 Plugin::create(:fav_timeline) do
   prev = UserConfig[:fav_users]
+
   on_update do |service, message|
     if UserConfig[:auto_fav] || UserConfig[:auto_rt]
       if UserConfig[:fav_users]
@@ -57,7 +58,9 @@ Plugin::create(:fav_timeline) do
       if UserConfig[:auto_fav]
         message.favorite(true) if !message.favorite? && !message[:retweet]
       end
-      message.retweet if !message[:retweet] && UserConfig[:auto_rt]
+      if UserConfig[:auto_rt]
+        message.retweet if !message[:retweet]
+      end
     end
     return sec
   end
@@ -70,11 +73,15 @@ Plugin::create(:fav_timeline) do
         UserConfig[:fav_users].split(/,/).each do |u|
           user = u.strip
           str = str.sub(/#{user}/, '')
-          Service.services.first.update(:message => "せっと @#{user}") if /#{user}/ !~ prev
+          if /#{user}/ !~ prev
+            Service.services.first.update(:message => "せっと @#{user}")
+          end
         end
         str.split(/,/).each do|u|
           user = u.strip
-          Service.services.first.update(:message => "あんせっと @#{user}") if !user.empty?
+          if !user.empty?
+            Service.services.first.update(:message => "あんせっと @#{user}")
+          end
         end
         true
       end
