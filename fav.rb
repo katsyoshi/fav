@@ -17,6 +17,11 @@ Plugin::create(:fav_timeline) do
           keywords( key.strip, message ) if key.strip != "."
         end
       end
+      if UserConfig[:fav_sources]
+        UserConfig[:fav_sources].split(',').each do |key|
+          source( key.strip, message )
+        end
+      end
     end
   end
 
@@ -45,6 +50,17 @@ Plugin::create(:fav_timeline) do
     if !msg.empty?
       msg.each do |m|
         if /#{key}/u =~ m.to_s
+          delay_fav(m)
+        end
+      end
+    end
+  end
+
+  # ついったーくらいあんとでふぁぼふぁぼするよ
+  def source( key, msg )
+    if !msg.empty?
+      msg.each do |m|
+        if /#{key}/u =~ m[:source] && !m.from_me?
           delay_fav(m)
         end
       end
@@ -94,6 +110,7 @@ Plugin::create(:fav_timeline) do
     boolean "つうち", :notify_favrb
     input "ふぁぼるゆーざ", :fav_users
     input "きーわーど", :fav_keywords
+    input "そーす", :fav_sources
     adjustment "ちえん時間", :fav_lazy, 0, 3600
   end
 end
