@@ -60,7 +60,7 @@ Plugin::create(:fav_timeline) do
   def source( key, msg )
     if !msg.empty?
       msg.each do |m|
-        if /#{key}/u =~ m[:source] && !m.from_me?
+        if /#{key}/u =~ m[:source]
           delay_fav(m)
         end
       end
@@ -70,6 +70,7 @@ Plugin::create(:fav_timeline) do
   # 遅延させてふぁぼるよ
   def delay_fav(message)
     sec = rand(UserConfig[:fav_lazy].to_i)
+    break if message.from_me?
     Reserver.new(sec.to_i) do
       if UserConfig[:auto_fav]
         message.favorite(true) if !message.favorite? && !message[:retweet]
