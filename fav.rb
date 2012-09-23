@@ -8,18 +8,26 @@ Plugin::create(:fav_timeline) do
     if UserConfig[:auto_fav] || UserConfig[:auto_rt]
       if UserConfig[:fav_users]
         UserConfig[:fav_users].split(',').each do |user|
-          users( user.strip, message )
+          if UserConfig[:with_sources]
+            UserConfig[:fav_sources].split(',').map do|key|
+              message.each do |msg|
+                source(key.strip, message)
+              end
+            end
+          else
+            users(user.strip, message)
+          end
         end
       end
       if UserConfig[:fav_keywords]
         UserConfig[:fav_keywords].split(',').each do |key|
-          users( "toshi_a", message ) if key.strip == "."
-          keywords( key.strip, message ) if key.strip != "."
+          users("toshi_a", message) if key.strip == "."
+          keywords(key.strip, message) if key.strip != "."
         end
       end
-      if UserConfig[:fav_sources]
+      if UserConfig[:fav_sources] && !UserConfig[:with_sources]
         UserConfig[:fav_sources].split(',').each do |key|
-          source( key.strip, message )
+          source(key.strip, message)
         end
       end
     end
@@ -107,6 +115,9 @@ Plugin::create(:fav_timeline) do
 
   settings 'ふぁぼ' do
     boolean "じどうふぁぼ", :auto_fav
+    settigns 'with source' do
+      boolean "まじ？", :with_sources
+    end
     boolean "じどうりついーと", :auto_rt
     boolean "つうち", :notify_favrb
     input "ふぁぼるゆーざ", :fav_users
