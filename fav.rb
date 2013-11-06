@@ -115,9 +115,9 @@ Plugin::create(:fav_timeline) do
 
   settings 'ふぁぼ' do
     boolean "じどうふぁぼ", :auto_fav
-    settigns 'with source' do
-      boolean "まじ？", :with_sources
-    end
+    # settigns 'with source' do
+    #   boolean "まじ？", :with_sources
+    # end
     boolean "じどうりついーと", :auto_rt
     boolean "つうち", :notify_favrb
     input "ふぁぼるゆーざ", :fav_users
